@@ -4,7 +4,7 @@ Final Grade Project for Bachelor Degree on Bionformatics 2019-2020
 
 Design and analysis of a psychophysical experiment which aims to establish if
 symmetry can be perceived as a continuous feature
-Each folder contains code and information about the experimental procedure:
+Each folder contains code and information about different stages of the experimental procedure:
 
 * Experiment:
 Contains code about the symmetric images creation procedure and experimental design
