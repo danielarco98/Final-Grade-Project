@@ -1,6 +1,7 @@
 # Final Grade Project
 ### Daniel Arco Alonso
 Final Grade Project for Bachelor Degree on Bionformatics 2019-2020
+
 Design and analysis of a psychophysical experiment which aims to establish if
 symmetry can be perceived as a continuous feature
 Each folder contains code and information about the experimental procedure:
