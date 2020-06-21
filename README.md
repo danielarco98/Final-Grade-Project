@@ -9,7 +9,7 @@ Each folder contains code and information about different stages of the experime
 Contains code about the symmetric images creation procedure and experimental design.
 Scripts were written in Matlab 2019b environment:
   1. Generate_PartialSymmetricImage.m: Main function used for generating white and black images
-  with global and local symmetric pattern.
+  with global and local symmetric patterns.
   2. CreateSymm_Pattern.m: Function used on the previous function for generating local symmetric patterns with desired asymmetry gradation.
   3. Symmetry_Score.m: Used for assigning the correlation coefficient as a symmetry measure on the experimental images.
   4. testscores.m: Used for testing the evolution of global symmetry and correlation between symmetric halves.
