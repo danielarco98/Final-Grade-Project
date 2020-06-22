@@ -50,8 +50,8 @@ Screen('TextSize', window, 150);
 %----------------------------------------------------------------------
 
 
-im_foldername= 'SynthSamples';
-param_foldername= 'SynthParams';
+im_foldername= 'ExperimentIm';
+param_foldername= '';
 
 Files = dir(im_foldername);
 ImageFiles = Files(3:end,:); %First two are the parent directories
@@ -63,7 +63,7 @@ randorders = indices(randperm(length(indices))); %randomise the order of trials
 
 %load the condition matrix
 
-params_mat= load( char(strcat(param_foldername, '\', 'totalcondition_matrix.mat')));
+params_mat= load( char('totalcondition_matrix.mat'));
 condition_mat= params_mat.cond_mat;
 condition_mat= condition_mat(randorders, :);
 

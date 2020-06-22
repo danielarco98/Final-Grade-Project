@@ -55,7 +55,7 @@ while keyIsDown == 0
      end
 end
 WaitSecs(0.5);
-im_foldername= 'Explanation';
+im_foldername= 'TrainingIm';
 
 %Load the image
 imfile = strcat(im_foldername,'\', 'g0.bmp');
