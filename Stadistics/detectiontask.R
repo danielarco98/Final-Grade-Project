@@ -27,7 +27,7 @@ for (i in 1:length(file_list)){
   dataset <- rbind(dataset, temp_data) #for each iteration, bind the new data to the building dataset
 }
 
-#Store a boolean which indicates us if symmmetry axis orientation has been perceived properly or not
+#Store a boolean which indicates us if symmetry axis orientation has been perceived properly or not
 dataset$V6 <- dataset$V5 == dataset$V6
 
 

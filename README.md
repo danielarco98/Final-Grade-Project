@@ -6,7 +6,7 @@ Design and analysis of a psychophysical experiment which aims to establish if sy
 Each folder contains code and information about different stages of the experimental procedure:
 
 * Experiment:
-Contains code about the symmetric images creation procedure and experimental design.
+Contains code about the symmetric images creation procedure and experimental design. There are two subdirectories containing the experimental(ExperimentIm) and training (TrainingIm) images. 
 Scripts were written in Matlab 2019b environment:
   1. Generate_PartialSymmetricImage.m: Main function used for generating white and black images
   with global and local symmetric patterns.
