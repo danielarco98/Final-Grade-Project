@@ -9,25 +9,29 @@ library(reshape2)
 ############################################################################
 ## Load the data
 
-#Set as working directory to source file location
+#IMPORTANT
+#Before running the code set as working directory to source file location
 dir <- dirname(getwd())
-setwd(dir)
 
-file_list <- list.files(path=paste(c(dir,'/Stats/Results/'),  collapse = ''))
+#Get the file list of all response matrices
+file_list <- list.files(path=paste(c(dir,'/Stadistics/Results/'),  collapse = ''))
 
 #initiate a blank data frame, each iteration of the loop will append the data from the given file to this variable
 dataset <- data.frame()
 
-#had to specify columns to get rid of the total column
+#Build a dataset with all the responses
 for (i in 1:length(file_list)){
-  temp_data <- readMat(paste(c(dir,'/Stats/Results/',file_list[i]), collapse = ''))
+  temp_data <- readMat(paste(c(dir,'/Stadistics/Results/',file_list[i]), collapse = ''))
   temp_data <- temp_data$respMat
   temp_data <- cbind(rep(i,40 ),temp_data)
   dataset <- rbind(dataset, temp_data) #for each iteration, bind the new data to the building dataset
 }
+
+#Store a boolean which indicates us if symmmetry axis orientation has been perceived properly or not
 dataset$V6 <- dataset$V5 == dataset$V6
 
 
+#Assign a score of 0 to every image where the axis was not detected properly
 realscore <- dataset$V4
 realscore[dataset$V6==FALSE]<- 0
 dataset$V4 <- realscore;
@@ -52,18 +56,17 @@ colnames(dataset) <- c(
 )
 
 
-#Now add factors for variables that are factors
+#Transform the range of global and local symmetry from 0.5-1 to 0-1
 dataset$GlobalSymm<- (dataset$GlobalSymm - min(dataset$GlobalSymm))/(max(dataset$GlobalSymm)-min(dataset$GlobalSymm)) 
 dataset$LocalSymm<- (dataset$LocalSymm - min(dataset$LocalSymm))/(max(dataset$LocalSymm)-min(dataset$LocalSymm))
-dataset$Score <- as.ordered(dataset$Score)
-#dataset$Score[dataset$GlobalSymm == 0] <- 0;
 
+
+#Now add factors for variables that are factors
 dataset<- na.omit(dataset)
 dataset$SubjectNum <- as.factor(dataset$SubjectNum)
 dataset$TrueSymmOri <- as.factor(dataset$TrueSymmOri)
-dataset$DetectedSymm <- as.factor(dataset$DetectedSymm) # Now convert to a factor
-voted5<- as.factor(dataset$Score==5)
-dataset<- cbind(dataset,voted5)
+dataset$DetectedSymm <- as.factor(dataset$DetectedSymm) 
+dataset$Score <- as.ordered(dataset$Score)
 
 #Exclude the figures with no global symmetry which introduces noise
 excludelocal<- dataset$DetectedSymm
@@ -83,10 +86,10 @@ summary(simple_logistic)
 
 #Predict maximum likelihood probabilities
 GlobalSymm_range <- seq(from=min(dataset$GlobalSymm), to=max(dataset$GlobalSymm), by=.01)
-GlobalSymm_slope <- simple_logistic$coefficients[2]
-b0 <- simple_logistic$coefficients[1]
-logits<- b0 + GlobalSymm_slope* GlobalSymm_range
-probs <- exp(logits)/(1+exp(logits))
+GlobalSymm_slope <- simple_logistic$coefficients[2] #b1 term of logistic regression formula
+b0 <- simple_logistic$coefficients[1] #Intercept term
+logits<- b0 + GlobalSymm_slope* GlobalSymm_range 
+probs <- exp(logits)/(1+exp(logits)) #Maximum likelihood probabilities
 
 #Compute the experimental probabilities as the mean detection for each percentage of
 #global symmetric points
@@ -95,6 +98,9 @@ means_tot=dataset %>%
   summarize(
     means_tot = mean(as.logical(DetectedSymm))
   )
+
+#Store the mean detection of each subject for every value of global symmetry
+#Used for calculating the SD for error bars
 means_subjects=dataset %>%
   group_by(SubjectNum,GlobalSymm) %>%
   summarize(
@@ -102,7 +108,7 @@ means_subjects=dataset %>%
   )
 
 
-#Calculate the sd of intersubject variability
+#Calculate the sd for every subject on each value of global symmetry
 sd_tot= rep(0, 10)
 for (i in 1:10) {
   for (a in 1:length(means_subjects$GlobalSymm)){
@@ -116,10 +122,10 @@ for (i in 1:10) {
 
 #Plot of the probability of detection vs global symmetry
 ggplot() +
-  geom_line(aes(x=GlobalSymm_range, y=probs))+
-  geom_point(aes(x=means_tot$GlobalSymm, y= means_tot$means_tot), size=2) +
+  geom_line(aes(x=GlobalSymm_range, y=probs))+ #Maximum likelihood fit
+  geom_point(aes(x=means_tot$GlobalSymm, y= means_tot$means_tot), size=2) + #Experimental data
   geom_errorbar(aes(x=means_tot$GlobalSymm, y= means_tot$means_tot, ymin=means_tot$means_tot-sd_tot, ymax=means_tot$means_tot+sd_tot), width=.002,
-                position=position_dodge(.9)) +
+                position=position_dodge(.9)) + #Error bars for experimental data
   xlab("% Global Symmetry") +
   ylab("Probability of detecting the axis of symmetry")
 
